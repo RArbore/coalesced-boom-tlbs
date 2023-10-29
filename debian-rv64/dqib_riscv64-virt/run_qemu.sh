@@ -1,0 +1,15 @@
+qemu-system-riscv64 \
+	-machine virt \
+	-cpu rv64 \
+	-m 4G \
+	-device virtio-blk-device,drive=hd \
+	-drive file=overlay.qcow2,if=none,id=hd \
+	-device virtio-net-device,netdev=net \
+	-netdev user,id=net,hostfwd=tcp::2222-:22 \
+	-bios /usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.bin \
+	-kernel ./u-boot-qemu/uboot.elf \
+	-object rng-random,filename=/dev/urandom,id=rng \
+	-device virtio-rng-device,rng=rng \
+	-append "root=LABEL=rootfs console=ttyS0" \
+	-monitor unix:qemu-monitor-socket,server,nowait \
+	-nographic
